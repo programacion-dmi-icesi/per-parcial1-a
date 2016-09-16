@@ -6,12 +6,11 @@ public class Executable extends PApplet {
 	private Logic log;
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		PApplet.main("programaciondmi.per.Executable", args);
 	}
 	
 	public void settings(){
-		size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		size(500, 500);
 	}
 	
 	public void setup(){

@@ -58,6 +58,7 @@ public class CommunicationManager extends Observable implements Runnable {
 	}
 
 	private void greetGroup() {
+		System.out.println("Sending greeting");
 		AutoIDMessage message = new AutoIDMessage("Hi i'm a new member");
 		byte[] bytes = serialize(message);
 		try {
@@ -81,8 +82,9 @@ public class CommunicationManager extends Observable implements Runnable {
 				String messageContent = message.getContent();
 
 				// If it is a greet response
-				if (messageContent.contains("I am:")) { // hola soy:0 / hola
-														// soy:1
+				if (messageContent.contains("I am:")) {
+					System.out.println("received data was a greeting answer");
+					System.out.println("recalculatig my AutoID");
 					String[] partes = messageContent.split(":");
 					int externalID = Integer.parseInt(partes[1]);
 					if (externalID >= identifier) {
@@ -104,6 +106,7 @@ public class CommunicationManager extends Observable implements Runnable {
 	}
 
 	private void answerGreeting() {
+		System.out.println("Sending greeting answer");
 		AutoIDMessage message = new AutoIDMessage("Hi, I am:" + identifier);
 		byte[] bytes = serialize(message);
 		try {
@@ -169,6 +172,7 @@ public class CommunicationManager extends Observable implements Runnable {
 
 	@Override
 	public void run() {
+		System.out.println("Listening...");
 		while (true) {
 			// Control that the socket is still listening
 			if (socket != null) {
@@ -191,13 +195,14 @@ public class CommunicationManager extends Observable implements Runnable {
 							// We are interested only on new members that
 							// haven't been identified
 							if (messageContent.contains("new member")) {
+								System.out.println("received data was a greeting");
 								answerGreeting();
 							}
 						}
 
 						// If we need to validate other kind of objects this is
 						// the moment
-
+						
 						
 
 						// Notify the observers that new data has arrived and
@@ -206,6 +211,8 @@ public class CommunicationManager extends Observable implements Runnable {
 						setChanged();
 						notifyObservers(receivedObject);
 						clearChanged();
+					}else{
+						System.out.println("A null Object was received");
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -218,5 +225,15 @@ public class CommunicationManager extends Observable implements Runnable {
 	public int getIdentifier() {
 		// TODO Auto-generated method stub
 		return this.identifier;
+	}
+	
+	public void sendObjectMessage(Object data){
+		byte[] bytes = serialize(data);
+		try {
+			sendMessage(bytes, group_ia, PORT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
